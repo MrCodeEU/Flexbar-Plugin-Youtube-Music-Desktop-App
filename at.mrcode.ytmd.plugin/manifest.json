@@ -27,7 +27,7 @@
 },
     "name": "YouTube Music Integration",
     "uuid": "at.mrcode.ytmd",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "author": "MrCodeEU",
     "entry": "backend/plugin.cjs",
     "description": "YouTube Music Integration for FlexBar via Companion Server",
