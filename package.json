@@ -1,0 +1,84 @@
+{
+  "name": "flexbar-youtube-music-plugin",
+  "version": "1.0.0",
+  "description": "YouTube Music integration plugin for FlexBar via Desktop App Companion Server",
+  "main": "src/plugin.js",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "npm-run-all plugin:unlink plugin:link -p plugin:watch plugin:debug",
+    "plugin:watch": "rollup -c -w --watch.onEnd=\"npm run plugin:restart\"",
+    "plugin:unlink": "flexcli plugin unlink --uuid at.mrcode.ytmd --silent",
+    "plugin:link": "flexcli plugin link --path at.mrcode.ytmd.plugin --uuid at.mrcode.ytmd --start false",
+    "plugin:restart": "flexcli plugin restart --uuid=at.mrcode.ytmd",
+    "plugin:debug": "flexcli plugin debug --uuid=at.mrcode.ytmd",
+    "plugin:validate": "flexcli plugin validate --path at.mrcode.ytmd",
+    "plugin:pack": "flexcli plugin pack --path at.mrcode.ytmd",
+    "plugin:install": "flexcli plugin install --path ./at.mrcode.ytmd.flexplugin --force",
+    "test": "echo \"No tests specified\" && exit 0",
+    "lint": "echo \"No linting configured\" && exit 0"
+  },
+  "keywords": [
+    "flexbar",
+    "youtube-music",
+    "plugin",
+    "music",
+    "control",
+    "desktop-app",
+    "companion-server"
+  ],
+  "author": "MrCodeEU",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.2",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^12.1.0",
+    "glob": "^10.3.10",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^4.0.2",
+    "rollup-plugin-natives": "^0.7.5",
+    "rollup-plugin-node-externals": "^8.0.0"
+  },
+  "dependencies": {
+    "@eniac/flexdesigner": "^1.0.6",
+    "balanced-match": "^3.0.1",
+    "brace-expansion": "^4.0.1",
+    "decompress-response": "^9.0.0",
+    "lru-cache": "^11.1.0",
+    "mimic-response": "^4.0.0",
+    "minimatch": "^10.0.3",
+    "minipass": "^7.1.2",
+    "once": "^1.4.0",
+    "parenthesis": "^3.1.8",
+    "path-scurry": "^2.0.0",
+    "simple-concat": "^1.0.1",
+    "simple-get": "^4.0.1",
+    "skia-canvas": "^2.0.2",
+    "socket.io-client": "^4.8.1",
+    "string-split-by": "^1.0.0",
+    "wrappy": "^1.0.2",
+    "yallist": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "flexbar": {
+    "pluginId": "at.mrcode.ytmd.plugin",
+    "minFlexBarVersion": "1.1.0",
+    "supportedPlatforms": [
+      "windows",
+      "macos",
+      "linux"
+    ]
+  }
+}

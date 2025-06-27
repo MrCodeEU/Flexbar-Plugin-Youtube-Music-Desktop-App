@@ -1,0 +1,180 @@
+{
+    "config": {
+    "appName": {
+        "type": "string",
+        "default": "FlexBar YouTube Music Plugin"
+    },
+    "appVersion": {
+        "type": "string",
+        "default": "1.0.0"
+    },
+    "token": {
+        "type": "string",
+        "default": ""
+    },
+    "appId": {
+        "type": "string",
+        "default": ""
+    },
+    "isAuthenticated": {
+        "type": "boolean",
+        "default": false
+    },
+    "logLevel": {
+        "type": "string",
+        "default": "INFO"
+    }
+},
+    "name": "YouTube Music Integration",
+    "uuid": "at.mrcode.ytmd",
+    "version": "0.1.0",
+    "author": "MrCodeEU",
+    "entry": "backend/plugin.cjs",
+    "description": "YouTube Music Integration for FlexBar via Companion Server",
+    "repo": "",
+    "sdk": {
+        "version": "1.0.0"
+    },
+    "software": {
+        "minimumVersion": "1.1.0"
+    },
+    "os": [
+        {
+            "platform": "mac",
+            "minimumVersion": "10.15"
+        },
+        {
+            "platform": "windows",
+            "minimumVersion": "10"
+        },
+        {
+            "platform": "linux",
+            "minimumVersion": "20.04"
+        }
+    ],
+    "device": [
+        {
+            "name": "flexbar",
+            "version": "1.0.0"
+        }
+    ],
+    "configPage": "global_config",
+    "keyLibrary": {
+        "title": "YouTube Music",
+        "style": {
+            "icon": "mdi mdi-youtube-tv"
+        },
+        "children": [
+            {
+                "title": "$YouTubeMusic.NowPlaying.Title",
+                "tip": "$YouTubeMusic.NowPlaying.Tip",
+                "cid": "at.mrcode.ytmd.nowplaying",
+                "config": {
+                    "keyType": "default",
+                    "clickable": false,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-music-note",
+                    "width": 480
+                },
+                "data": {
+                    "updateInterval": 5000,
+                    "showArtist": true,
+                    "showProgress": true,
+                    "showTimeInfo": true,
+                    "showPlayPause": true,
+                    "enableInterpolation": true,
+                    "interpolationIntervalMs": 1000,
+                    "titleFontSize": 18,
+                    "artistFontSize": 14,
+                    "timeFontSize": 10,
+                    "progressBarColor": "#FF0000"
+                }
+            },
+            {
+                "title": "$YouTubeMusic.Like.Title",
+                "tip": "$YouTubeMusic.Like.Tip",
+                "cid": "at.mrcode.ytmd.like",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-thumb-up",
+                    "width": 120
+                },
+                "data": {
+                    "likedColor": "#FF0000",
+                    "unlikedColor": "#FFFFFF",
+                    "likeBgColor": "#424242"
+                }
+            },
+            {
+                "title": "$YouTubeMusic.PlayPause.Title",
+                "tip": "$YouTubeMusic.PlayPause.Tip",
+                "cid": "at.mrcode.ytmd.playpause",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-play-pause",
+                    "width": 120
+                },
+                "data": {
+                    "playColor": "#00FF00",
+                    "pauseColor": "#FF6600",
+                    "bgColor": "#424242"
+                }
+            }
+        ]
+    },
+    "local": {
+        "en": {
+            "PluginName": "YouTube Music",
+            "YouTubeMusic": {
+                "NowPlaying": {
+                    "Title": "Now Playing",
+                    "Tip": "Display currently playing track"
+                },
+                "PlayPause": {
+                    "Title": "Play/Pause",
+                    "Tip": "Toggle playback"
+                },
+                "Previous": {
+                    "Title": "Previous",
+                    "Tip": "Go to previous track"
+                },
+                "Next": {
+                    "Title": "Next",
+                    "Tip": "Go to next track"
+                },
+                "Like": {
+                    "Title": "Like",
+                    "Tip": "Like/Unlike the current track"
+                },
+                "Settings": {
+                    "Title": "Settings",
+                    "AppName": "App Name",
+                    "AppVersion": "App Version",
+                    "Connect": "Connect to YouTube Music"
+                }
+            }
+        }
+    }
+}
