@@ -2,7 +2,7 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-brightgreen)](https://nodejs.org/)
 [![FlexDesigner](https://img.shields.io/badge/FlexDesigner-v1.1.0%2B-blue)](https://eniacelec.com/pages/software)
-[![YTMD](https://img.shields.io/badge/ytmdesktop-v2.0.0+%2B-Red)](https://github.com/ytmdesktop/ytmdesktop)
+[![YTMD](https://img.shields.io/badge/ytmdesktop-v2.0.0%2B-Red)](https://github.com/ytmdesktop/ytmdesktop)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/Platforms-Windows%20%7C%20macOS%20%7C%20Linux-orange)](https://eniacelec.com/pages/software)
 
