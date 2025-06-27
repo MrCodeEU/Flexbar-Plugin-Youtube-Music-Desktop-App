@@ -1,6 +1,6 @@
 // YouTube Music FlexBar Plugin - Main Entry Point
 const { plugin } = require('@eniac/flexdesigner');
-const logger = require('./loggerWrapper.js');
+const logger = require('./loggerwrapper.js');
 const keyManager = require('./keyManager.js');
 const YouTubeMusicApi = require('./ytMusicApi.js');
 const YouTubeMusicAuth = require('./ytMusicAuth.js');

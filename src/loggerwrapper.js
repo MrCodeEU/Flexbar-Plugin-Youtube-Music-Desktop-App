@@ -31,7 +31,7 @@ async function _updateLogLevelFromConfig() {
         const oldLogLevelName = currentConfiguredLogLevelName;
 
         if (config && typeof config.logLevel === 'string' && LOG_LEVELS.hasOwnProperty(config.logLevel.toUpperCase())) {
-            loggerWrapper.info(PLUGIN_PREFIX, `Updating log level from config. New level: ${config.logLevel}`);
+            loggerwrapper.info(PLUGIN_PREFIX, `Updating log level from config. New level: ${config.logLevel}`);
             const newLevelName = config.logLevel.toUpperCase();
             currentConfiguredLogLevelName = newLevelName;
         } else {
@@ -60,7 +60,7 @@ async function _updateLogLevelFromConfig() {
 }
 
 // Wrapper functions
-const loggerWrapper = {
+const loggerwrapper = {
     debug: (...args) => {
         if (getCurrentNumericLogLevel() >= LOG_LEVELS.DEBUG) {
             flexbarLogger.debug(PLUGIN_PREFIX, ...args);
@@ -120,4 +120,4 @@ const loggerWrapper = {
     LOG_LEVELS
 };
 
-module.exports = loggerWrapper;
+module.exports = loggerwrapper;

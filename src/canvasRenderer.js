@@ -1,6 +1,6 @@
 // YouTube Music Canvas Renderer
 const { Canvas, loadImage } = require('skia-canvas');
-const logger = require('./loggerWrapper');
+const logger = require('./loggerwrapper');
 const { truncateText, getImageColors, roundedRect, createFallbackImage, decodeHtmlEntities } = require('./utils');
 
 const createCanvas = (width, height) => new Canvas(width, height);

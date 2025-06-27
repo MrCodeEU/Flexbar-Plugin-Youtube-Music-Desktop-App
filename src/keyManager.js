@@ -1,6 +1,6 @@
 // YouTube Music Plugin Key Manager
 const { plugin } = require('@eniac/flexdesigner');
-const logger = require('./loggerWrapper.js');
+const logger = require('./loggerwrapper.js');
 
 // --- State Management ---
 // Stores configuration and state for each key, keyed by key.uid

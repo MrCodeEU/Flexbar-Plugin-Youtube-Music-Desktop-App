@@ -1,6 +1,6 @@
 // YouTube Music Plugin Utilities
 const { Canvas } = require('skia-canvas');
-const logger = require('./loggerWrapper');
+const logger = require('./loggerwrapper');
 
 const createCanvas = (width, height) => new Canvas(width, height);
 

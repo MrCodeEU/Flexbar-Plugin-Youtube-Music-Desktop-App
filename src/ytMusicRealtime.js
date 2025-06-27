@@ -1,6 +1,6 @@
 // YouTube Music Real-time Socket.IO Handler
 const io = require('socket.io-client');
-const logger = require('./loggerWrapper');
+const logger = require('./loggerwrapper');
 
 /**
  * Real-time state manager for YouTube Music using Socket.IO

@@ -187,7 +187,7 @@ src/
 ├── ytMusicRealtime.js     # Socket.IO real-time handler
 ├── canvasRenderer.js      # Canvas rendering for keys
 ├── keyManager.js          # Key state management
-├── loggerWrapper.js       # Logging utilities
+├── loggerwrapper.js       # Logging utilities
 └── utils.js               # Utility functions
 
 at.mrcode.ytmd.plugin/
