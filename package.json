@@ -11,8 +11,8 @@
     "plugin:link": "flexcli plugin link --path at.mrcode.ytmd.plugin --uuid at.mrcode.ytmd --start false",
     "plugin:restart": "flexcli plugin restart --uuid=at.mrcode.ytmd",
     "plugin:debug": "flexcli plugin debug --uuid=at.mrcode.ytmd",
-    "plugin:validate": "flexcli plugin validate --path at.mrcode.ytmd",
-    "plugin:pack": "flexcli plugin pack --path at.mrcode.ytmd",
+    "plugin:validate": "flexcli plugin validate --path at.mrcode.ytmd.plugin",
+    "plugin:pack": "flexcli plugin pack --path at.mrcode.ytmd.plugin",
     "plugin:install": "flexcli plugin install --path ./at.mrcode.ytmd.flexplugin --force",
     "test": "echo \"No tests specified\" && exit 0",
     "lint": "echo \"No linting configured\" && exit 0"
