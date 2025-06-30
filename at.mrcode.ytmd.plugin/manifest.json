@@ -25,13 +25,13 @@
         "default": "INFO"
     }
 },
-    "name": "YouTube Music Integration",
+    "name": "YouTube Music Desktop App Integration",
     "uuid": "at.mrcode.ytmd",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "author": "MrCodeEU",
     "entry": "backend/plugin.cjs",
-    "description": "YouTube Music Integration for FlexBar via Companion Server",
-    "repo": "",
+    "description": "YouTube Music Desktop App Integration for FlexBar via Companion Server\nhttps://github.com/ytmdesktop/ytmdesktop",
+    "repo": "https://github.com/MrCodeEU/Flexbar-Plugin-Youtube-Music-Desktop-App",
     "sdk": {
         "version": "1.0.0"
     },
@@ -60,9 +60,9 @@
     ],
     "configPage": "global_config",
     "keyLibrary": {
-        "title": "YouTube Music",
+        "title": "YouTube Music Desktop App",
         "style": {
-            "icon": "mdi mdi-youtube-tv"
+            "icon": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDIzLjAuMSwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiIFsKCTwhRU5USVRZIG5zX2V4dGVuZCAiaHR0cDovL25zLmFkb2JlLmNvbS9FeHRlbnNpYmlsaXR5LzEuMC8iPgoJPCFFTlRJVFkgbnNfYWkgImh0dHA6Ly9ucy5hZG9iZS5jb20vQWRvYmVJbGx1c3RyYXRvci8xMC4wLyI+Cgk8IUVOVElUWSBuc19ncmFwaHMgImh0dHA6Ly9ucy5hZG9iZS5jb20vR3JhcGhzLzEuMC8iPgoJPCFFTlRJVFkgbnNfdmFycyAiaHR0cDovL25zLmFkb2JlLmNvbS9WYXJpYWJsZXMvMS4wLyI+Cgk8IUVOVElUWSBuc19pbXJlcCAiaHR0cDovL25zLmFkb2JlLmNvbS9JbWFnZVJlcGxhY2VtZW50LzEuMC8iPgoJPCFFTlRJVFkgbnNfc2Z3ICJodHRwOi8vbnMuYWRvYmUuY29tL1NhdmVGb3JXZWIvMS4wLyI+Cgk8IUVOVElUWSBuc19jdXN0b20gImh0dHA6Ly9ucy5hZG9iZS5jb20vR2VuZXJpY0N1c3RvbU5hbWVzcGFjZS8xLjAvIj4KCTwhRU5USVRZIG5zX2Fkb2JlX3hwYXRoICJodHRwOi8vbnMuYWRvYmUuY29tL1hQYXRoLzEuMC8iPgpdPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zOng9IiZuc19leHRlbmQ7IiB4bWxuczppPSImbnNfYWk7IiB4bWxuczpncmFwaD0iJm5zX2dyYXBoczsiCgkgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxNzYgMTc2IgoJIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDE3NiAxNzYiIHhtbDpzcGFjZT0icHJlc2VydmUiPgo8bWV0YWRhdGE+Cgk8c2Z3ICB4bWxucz0iJm5zX3NmdzsiPgoJCTxzbGljZXM+PC9zbGljZXM+CgkJPHNsaWNlU291cmNlQm91bmRzICBib3R0b21MZWZ0T3JpZ2luPSJ0cnVlIiBoZWlnaHQ9IjE3NiIgd2lkdGg9IjE3NiIgeD0iOCIgeT0iLTE4NCI+PC9zbGljZVNvdXJjZUJvdW5kcz4KCTwvc2Z3Pgo8L21ldGFkYXRhPgo8ZyBpZD0iWE1MSURfMTY3XyI+Cgk8Y2lyY2xlIGlkPSJYTUxJRF83OTFfIiBmaWxsPSIjRkYwMDAwIiBjeD0iODgiIGN5PSI4OCIgcj0iODgiLz4KCTxwYXRoIGlkPSJYTUxJRF80Ml8iIGZpbGw9IiNGRkZGRkYiIGQ9Ik04OCw0NmMyMy4xLDAsNDIsMTguOCw0Miw0MnMtMTguOCw0Mi00Miw0MnMtNDItMTguOC00Mi00MlM2NC45LDQ2LDg4LDQ2IE04OCw0MgoJCWMtMjUuNCwwLTQ2LDIwLjYtNDYsNDZzMjAuNiw0Niw0Niw0NnM0Ni0yMC42LDQ2LTQ2UzExMy40LDQyLDg4LDQyTDg4LDQyeiIvPgoJPHBvbHlnb24gaWQ9IlhNTElEXzI3NF8iIGZpbGw9IiNGRkZGRkYiIHBvaW50cz0iNzIsMTExIDExMSw4NyA3Miw2NSAJIi8+CjwvZz4KPC9zdmc+Cg=="
         },
         "children": [
             {
@@ -141,6 +141,60 @@
                     "pauseColor": "#FF6600",
                     "bgColor": "#424242"
                 }
+            },
+            {
+                "title": "$YouTubeMusic.Previous.Title",
+                "tip": "$YouTubeMusic.Previous.Tip",
+                "cid": "at.mrcode.ytmd.previous",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-skip-previous",
+                    "width": 120
+                }
+            },
+            {
+                "title": "$YouTubeMusic.Next.Title",
+                "tip": "$YouTubeMusic.Next.Tip",
+                "cid": "at.mrcode.ytmd.next",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-skip-next",
+                    "width": 120
+                }
+            },
+            {
+                "title": "$YouTubeMusic.Dislike.Title",
+                "tip": "$YouTubeMusic.Dislike.Tip",
+                "cid": "at.mrcode.ytmd.dislike",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-thumb-down",
+                    "width": 120
+                }
             }
         ]
     },
@@ -167,6 +221,10 @@
                 "Like": {
                     "Title": "Like",
                     "Tip": "Like/Unlike the current track"
+                },
+                "Dislike": {
+                    "Title": "Dislike",
+                    "Tip": "Dislike/Remove like from the current track"
                 },
                 "Settings": {
                     "Title": "Settings",
