@@ -158,6 +158,9 @@
                 "style": {
                     "icon": "mdi mdi-skip-previous",
                     "width": 120
+                },
+                "data": {
+                    "bgColor": "#424242"
                 }
             },
             {
@@ -176,6 +179,9 @@
                 "style": {
                     "icon": "mdi mdi-skip-next",
                     "width": 120
+                },
+                "data": {
+                    "bgColor": "#424242"
                 }
             },
             {
@@ -194,6 +200,11 @@
                 "style": {
                     "icon": "mdi mdi-thumb-down",
                     "width": 120
+                },
+                "data": {
+                    "dislikedColor": "#FF0000",
+                    "unlikedColor": "#FFFFFF",
+                    "dislikeBgColor": "#424242"
                 }
             }
         ]
