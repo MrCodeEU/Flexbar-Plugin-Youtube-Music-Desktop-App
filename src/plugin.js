@@ -270,6 +270,12 @@ function _handlePluginData(payload) {
         case 'at.mrcode.ytmd.playpause':
             handlePlayPauseInteraction(serialNumber, key, data);
             break;
+        case 'at.mrcode.ytmd.previous':
+            handlePreviousKeyInteraction(serialNumber, key, data);
+            break;
+        case 'at.mrcode.ytmd.next':
+            handleNextKeyInteraction(serialNumber, key, data);
+            break;
         default:
             logger.warn(`Unhandled key interaction for CID: ${key.cid}`);
             break;
@@ -829,6 +835,52 @@ async function handlePlayPauseInteraction(serialNumber, key, data) {
             showAuthError(serialNumber, 'play/pause');
         } else {
             showErrorNotification(serialNumber, `Play/pause failed: ${error.message}`, 'error', 'warning');
+        }
+    }
+}
+
+async function handleNextKeyInteraction(serialNumber, key, data) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    logger.info(`Handling next interaction for key ${keyId}`);
+
+    try {
+        if (!ytMusicAuth.getAuthenticationStatus()) {
+            throw new Error('Not authenticated');
+        }
+
+        await ytMusicApi.next();
+        logger.info('Next track requested');
+        showErrorNotification(serialNumber, 'Next track requested', 'info', 'skip-forward');
+
+    } catch (error) {
+        logger.error(`Error handling next interaction: ${error.message}`);
+        if (error.message.includes('Not authenticated')) {
+            showAuthError(serialNumber, 'next track');
+        } else {
+            showErrorNotification(serialNumber, `Next track failed: ${error.message}`, 'error', 'warning');
+        }
+    }
+}
+
+async function handlePreviousKeyInteraction(serialNumber, key, data) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    logger.info(`Handling previous interaction for key ${keyId}`);
+
+    try {
+        if (!ytMusicAuth.getAuthenticationStatus()) {
+            throw new Error('Not authenticated');
+        }
+
+        await ytMusicApi.previous();
+        logger.info('Previous track requested');
+        showErrorNotification(serialNumber, 'Previous track requested', 'info', 'skip-backward');
+
+    } catch (error) {
+        logger.error(`Error handling previous interaction: ${error.message}`);
+        if (error.message.includes('Not authenticated')) {
+            showAuthError(serialNumber, 'previous track');
+        } else {
+            showErrorNotification(serialNumber, `Previous track failed: ${error.message}`, 'error', 'warning');
         }
     }
 }

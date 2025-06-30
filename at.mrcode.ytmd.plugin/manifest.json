@@ -120,6 +120,29 @@
                 }
             },
             {
+                "title": "$YouTubeMusic.Dislike.Title",
+                "tip": "$YouTubeMusic.Dislike.Tip",
+                "cid": "at.mrcode.ytmd.dislike",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
+                },
+                "style": {
+                    "icon": "mdi mdi-thumb-down",
+                    "width": 120
+                },
+                "data": {
+                    "dislikedColor": "#FF0000",
+                    "unlikedColor": "#FFFFFF",
+                    "dislikeBgColor": "#424242"
+                }
+            },
+            {
                 "title": "$YouTubeMusic.PlayPause.Title",
                 "tip": "$YouTubeMusic.PlayPause.Tip",
                 "cid": "at.mrcode.ytmd.playpause",
@@ -182,29 +205,6 @@
                 },
                 "data": {
                     "bgColor": "#424242"
-                }
-            },
-            {
-                "title": "$YouTubeMusic.Dislike.Title",
-                "tip": "$YouTubeMusic.Dislike.Tip",
-                "cid": "at.mrcode.ytmd.dislike",
-                "config": {
-                    "keyType": "default",
-                    "clickable": true,
-                    "platform": [
-                        "windows",
-                        "mac",
-                        "linux"
-                    ]
-                },
-                "style": {
-                    "icon": "mdi mdi-thumb-down",
-                    "width": 120
-                },
-                "data": {
-                    "dislikedColor": "#FF0000",
-                    "unlikedColor": "#FFFFFF",
-                    "dislikeBgColor": "#424242"
                 }
             }
         ]
