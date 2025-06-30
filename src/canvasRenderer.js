@@ -155,6 +155,103 @@ function drawLikeIcon(ctx, x, y, size, isLiked, likedColor = '#FF0000', unlikedC
 }
 
 /**
+ * Draws a custom dislike icon (thumbs down)
+ */
+
+function drawDislikeIcon(ctx, x, y, size, isDisliked, dislikedColor = '#FF0000', undislikedColor = '#FFFFFF') {
+    ctx.save();
+    
+    // Center the icon
+    ctx.translate(x, y);
+    
+    // Scale based on size (SVG viewBox is 24x24)
+    const scale = size / 24;
+    ctx.scale(scale, scale);
+    
+    // Translate to match SVG coordinate system (centered)
+    ctx.translate(-12, -12);
+    
+    // Draw the main hand/thumb shape
+    ctx.beginPath();
+    
+    // Start at bottom left corner of palm
+    ctx.moveTo(3, 16);
+    
+    // Move right along bottom of palm to thumb base
+    ctx.lineTo(8.5, 16);
+    
+    // Go up along left side of thumb
+    ctx.lineTo(7.8, 20);
+    ctx.lineTo(8, 22.5);
+    
+    // Thumb tip - rounded top
+    ctx.quadraticCurveTo(8.2, 23.8, 9.5, 24);
+    ctx.quadraticCurveTo(10.8, 23.8, 11, 22.5);
+    
+    // Down right side of thumb
+    ctx.lineTo(11.5, 20);
+    ctx.lineTo(12.5, 18);
+    
+    // Connect to folded fingers
+    ctx.lineTo(15, 16.5);
+    ctx.lineTo(16.5, 17);
+    
+    // Right side of palm
+    ctx.quadraticCurveTo(17, 16.5, 17, 16);
+    
+    // Up to top
+    ctx.lineTo(17, 6);
+    
+    // Top left corner
+    ctx.quadraticCurveTo(17, 4, 15, 4);
+    
+    // Top edge
+    ctx.lineTo(6, 4);
+    
+    // Top right corner and down
+    ctx.quadraticCurveTo(4.5, 4, 3.5, 5);
+    ctx.lineTo(1.5, 12);
+    
+    // Bottom left
+    ctx.quadraticCurveTo(1, 13.5, 1, 15);
+    ctx.quadraticCurveTo(1, 17, 3, 17);
+    
+    ctx.closePath();
+    
+    // Style and draw based on isDisliked state
+    ctx.lineWidth = 1.5 / scale;
+    if (isDisliked === true || isDisliked === 0) {
+        ctx.fillStyle = dislikedColor;
+        ctx.fill();
+    } else if (isDisliked === false || isDisliked === 1) {
+        ctx.strokeStyle = undislikedColor;
+        ctx.stroke();
+    } else {
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.stroke();
+    }
+    // Draw the separate wrist/forearm piece
+    ctx.beginPath();
+    ctx.moveTo(23, 15);
+    ctx.lineTo(19, 15);
+    ctx.lineTo(19, 3);
+    ctx.lineTo(23, 3);
+    ctx.closePath();
+
+    if (isDisliked === true || isDisliked === 0) {
+        ctx.fillStyle = dislikedColor;
+        ctx.fill();
+    } else if (isDisliked === false || isDisliked === 1) {
+        ctx.strokeStyle = undislikedColor;
+        ctx.stroke();
+    } else {
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.stroke();
+    }
+    ctx.restore();
+}
+
+/**
  * Creates a modern YouTube Music now playing display
  */
 async function createYouTubeMusicCanvas(config) {
@@ -177,7 +274,7 @@ async function createYouTubeMusicCanvas(config) {
         artistFontSize = 16,
         timeFontSize = 14,
         progressBarColor = '#FF0000',
-        renderType = 'nowplaying', // 'nowplaying', 'like', 'playpause'
+        renderType = 'nowplaying', // 'nowplaying', 'like', 'playpause', 'dislike'
         isLiked = null,
         likedColor = '#FF0000',
         unlikedColor = '#FFFFFF',
@@ -205,6 +302,17 @@ async function createYouTubeMusicCanvas(config) {
 
         const iconSize = Math.min(width, height) * 0.6;
         drawLikeIcon(ctx, width / 2, height / 2, iconSize, isLiked, likedColor, unlikedColor);
+        return canvas;
+    }
+
+    if (renderType === 'dislike') {
+        // Render dislike button
+        ctx.fillStyle = likeBgColor || '#424242';
+        const cornerRadius = 10;
+        roundedRect(ctx, 0, 0, width, height, cornerRadius);
+        ctx.fill();
+        const iconSize = Math.min(width, height) * 0.6;
+        drawDislikeIcon(ctx, width / 2, height / 2, iconSize, isLiked, likedColor, unlikedColor);
         return canvas;
     }
 

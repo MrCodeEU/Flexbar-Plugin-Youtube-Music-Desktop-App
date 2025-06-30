@@ -200,6 +200,9 @@ function _handlePluginAlive(payload) {
                 case 'at.mrcode.ytmd.playpause':
                     initPromises.push(initializePlayPauseKey(serialNumber, key));
                     break;
+                case 'at.mrcode.ytmd.dislike':
+                    initPromises.push(initializeDislikeKey(serialNumber, key));
+                    break;
             }
         } else {
             logger.debug(`Key ${keyId} confirmed active.`);
@@ -260,6 +263,9 @@ function _handlePluginData(payload) {
             break;
         case 'at.mrcode.ytmd.like':
             handleLikeInteraction(serialNumber, key, data);
+            break;
+        case 'at.mrcode.ytmd.dislike':
+            handleDislikeInteraction(serialNumber, key, data);
             break;
         case 'at.mrcode.ytmd.playpause':
             handlePlayPauseInteraction(serialNumber, key, data);
@@ -327,6 +333,9 @@ function updateAllActiveKeys() {
                 break;
             case 'at.mrcode.ytmd.like':
                 updateLikeKeyDisplay(serialNumber, key);
+                break;
+            case 'at.mrcode.ytmd.dislike':
+                updateDislikeKeyDisplay(serialNumber, key);
                 break;
             case 'at.mrcode.ytmd.playpause':
                 updatePlayPauseKeyDisplay(serialNumber, key);
@@ -435,6 +444,31 @@ async function initializeLikeKey(serialNumber, key) {
 
     // Update display
     await updateLikeKeyDisplay(serialNumber, keyManager.keyData[keyUid]);
+}
+
+async function initializeDislikeKey(serialNumber, key) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    const keyUid = key.uid;
+
+    logger.info('Initializing like key:', keyId);
+
+    // Store key data
+    keyManager.keyData[keyUid] = {
+        ...key,
+        data: {
+            dislikedColor: key.data?.dislikedColor || '#FF0000',
+            unlikedColor: key.data?.unlikedColor || '#FFFFFF',
+            dislikeBgColor: key.data?.dislikeBgColor || '#424242',
+            currentTrackId: null,
+            isLiked: null
+        }
+    };
+
+    // Mark as active
+    keyManager.activeKeys[keyId] = true;
+
+    // Update display
+    await updateDislikeKeyDisplay(serialNumber, keyManager.keyData[keyUid]);
 }
 
 async function initializePlayPauseKey(serialNumber, key) {
@@ -598,6 +632,56 @@ async function updateLikeKeyDisplay(serialNumber, key) {
     }
 }
 
+async function updateDislikeKeyDisplay(serialNumber, key) {
+    const keyId = `${serialNumber}-${key.uid}`;
+
+    try {
+        if (!keyManager.activeKeys[keyId]) {
+            logger.warn(`Attempted to update inactive like key ${keyId}`);
+            return;
+        }
+
+        const currentKeyData = keyManager.keyData[key.uid];
+        if (!currentKeyData || !currentKeyData.data) {
+            logger.error(`Key data missing for like key ${key.uid} during display update`);
+            return;
+        }
+
+        // Update with current track's like status
+        const likeStatus = currentPlaybackState.likeStatus;
+        currentKeyData.data.isLiked = likeStatus;
+        currentKeyData.data.currentTrackId = currentPlaybackState.currentTrack?.videoId;
+
+        const buttonDataUrl = await renderer.createYouTubeMusicButtonDataUrl(
+            key.style?.width || 120,
+            '',
+            '',
+            false,
+            null,
+            0,
+            0,
+            {},
+            false, false, false, 18, 14, false, 10,
+            {
+                renderType: 'dislike',
+                isLiked: likeStatus,
+                dislikedColor: currentKeyData.data.dislikedColor,
+                unlikedColor: currentKeyData.data.unlikedColor,
+                dislikeBgColor: currentKeyData.data.dislikeBgColor
+            }
+        );
+
+        keyManager.simpleDraw(serialNumber, currentKeyData, buttonDataUrl);    } catch (error) {
+        logger.error(`Error updating dislike key ${keyId}: ${error.message}`);
+        keyManager.textOnlyDraw(serialNumber, key, 'Like Error');
+        if (error.message.includes('Not authenticated')) {
+            showAuthError(serialNumber, 'dislike control');
+        } else {
+            showErrorNotification(serialNumber, 'Dislike update failed', 'error', 'warning');
+        }
+    }
+}
+
 async function updatePlayPauseKeyDisplay(serialNumber, key) {
     const keyId = `${serialNumber}-${key.uid}`;
 
@@ -695,6 +779,31 @@ async function handleLikeInteraction(serialNumber, key, data) {
             showAuthError(serialNumber, 'like');
         } else {
             showErrorNotification(serialNumber, `Like failed: ${error.message}`, 'error', 'warning');
+        }
+    }
+}
+
+async function handleDislikeInteraction(serialNumber, key, data) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    logger.info(`Handling like interaction for key ${keyId}`);    try {
+        if (!ytMusicAuth.getAuthenticationStatus()) {
+            throw new Error('Not authenticated');
+        }
+
+        await ytMusicApi.toggleDislike();
+        logger.info('Dislike status toggled');
+        showErrorNotification(serialNumber, 'Dislike toggled', 'info', 'ok');
+
+        // Update display after short delay
+        setTimeout(() => {
+            updateDislikeKeyDisplay(serialNumber, key);
+        }, 500);
+    } catch (error) {
+        logger.error(`Error handling dislike interaction: ${error.message}`);
+        if (error.message.includes('Not authenticated')) {
+            showAuthError(serialNumber, 'dislike');
+        } else {
+            showErrorNotification(serialNumber, `Dislike failed: ${error.message}`, 'error', 'warning');
         }
     }
 }

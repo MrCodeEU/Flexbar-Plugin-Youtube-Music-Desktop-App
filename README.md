@@ -33,7 +33,9 @@ A YouTube Music integration plugin for FlexBar that provides real-time music inf
 
 ### 🎛️ Playback Controls
 - **Like/Unlike Button**: Toggle track like status
+- **Dislike/Undislike Button**: Toggle track dislike status
 - **Play/Pause Button**: Control playback state
+- **Next/Previous Track Buttons**: Navigate through the playlist
 - Real-time status updates via Socket.IO
 
 ### 💫 Interactive Elements
