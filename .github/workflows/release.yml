@@ -1,5 +1,4 @@
-
-name: Pack files and release
+name: Build, Test and Release
 
 on:
   push:
@@ -8,31 +7,89 @@ on:
 
 jobs:
   build:
-    permissions: write-all
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        node-version: [20]
 
     steps:
-      - name: Code checkout
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm i
+    - uses: actions/checkout@v3
     
-      - name: Install FlexCli
-        run: npm install -g @eniac/flexcli
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    
+    - name: Install dependencies
+      run: npm install --legacy-peer-deps
+      
+    - name: Install FlexCli
+      run: npm install -g @eniac/flexcli
+      
+    - name: Build plugin
+      run: npm run build
+      
+    - name: Pack plugin
+      run: npm run plugin:pack
+      
+    - name: Rename plugin for platform
+      shell: bash
+      run: |
+        PLATFORM_OS_FROM_MATRIX="${{ matrix.os }}"
+        RUNNER_ARCH_RAW="${{ runner.arch }}"
+        PLATFORM_ARCH_LOWER=$(echo "$RUNNER_ARCH_RAW" | tr '[:upper:]' '[:lower:]')
+        DOC_OS_NAME=""
+        case "$PLATFORM_OS_FROM_MATRIX" in
+          "windows-latest") DOC_OS_NAME="win32" ;;
+          "macos-latest") DOC_OS_NAME="darwin" ;;
+          "ubuntu-latest") DOC_OS_NAME="linux" ;;
+          *)
+            echo "::error::Unsupported OS in matrix: $PLATFORM_OS_FROM_MATRIX."
+            exit 1
+            ;;
+        esac
+        SOURCE_FILENAME="at.mrcode.ytmd.flexplugin"
+        TARGET_FILENAME="at.mrcode.ytmd.${DOC_OS_NAME}.${PLATFORM_ARCH_LOWER}.flexplugin"
+        if [ -f "$SOURCE_FILENAME" ]; then
+          mv "$SOURCE_FILENAME" "$TARGET_FILENAME"
+        else
+          echo "::error::Source file '$SOURCE_FILENAME' not found."
+          ls -la
+          exit 1
+        fi
+      
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: plugin-${{ matrix.os }}-${{ runner.arch }}
+        path: at.mrcode.ytmd.*.*.flexplugin
+        compression-level: 0
 
-      - name: Build Plugin
-        run: npm run build
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
 
-      - name: Pack Plugin
-        run: npm run plugin:pack
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
-      - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
-        with:
-          files: at.mrcode.ytmd.flexplugin
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+        merge-multiple: true
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: |
+          artifacts/*.flexplugin
+        draft: false
+        prerelease: false
+        generate_release_notes: true
