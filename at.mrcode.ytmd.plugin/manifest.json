@@ -206,6 +206,147 @@
                 "data": {
                     "bgColor": "#424242"
                 }
+            },
+            {
+                "title": "$YouTubeMusic.MuteToggle.Title",
+                "tip": "$YouTubeMusic.MuteToggle.Tip",
+                "cid": "at.mrcode.ytmd.mutetoggle",
+                "config": {
+                    "keyType": "multiState",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-volume-high",
+                    "width": 120,
+                    "multiStyle": [
+                        { "icon": "mdi mdi-volume-high", "bgColor": "#424242" },
+                        { "icon": "mdi mdi-volume-off", "bgColor": "#424242" }
+                    ]
+                },
+                "data": {
+                    "states": ["unmuted", "muted"]
+                }
+            },
+            {
+                "title": "$YouTubeMusic.Shuffle.Title",
+                "tip": "$YouTubeMusic.Shuffle.Tip",
+                "cid": "at.mrcode.ytmd.shuffle",
+                "config": {
+                    "keyType": "multiState",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-shuffle-variant",
+                    "width": 120,
+                    "multiStyle": [
+                        { "icon": "mdi mdi-shuffle-variant", "bgColor": "#424242" },
+                        { "icon": "mdi mdi-shuffle-disabled", "bgColor": "#424242" }
+                    ]
+                },
+                "data": {
+                    "states": ["shuffle", "notshuffle"]
+                }
+            },
+            {
+                "title": "$YouTubeMusic.Repeat.Title",
+                "tip": "$YouTubeMusic.Repeat.Tip",
+                "cid": "at.mrcode.ytmd.repeat",
+                "config": {
+                    "keyType": "multiState",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-repeat-off",
+                    "width": 120,
+                    "multiStyle": [
+                        { "icon": "mdi mdi-repeat-off", "bgColor": "#424242" },
+                        { "icon": "mdi mdi-repeat", "bgColor": "#424242" },
+                        { "icon": "mdi mdi-repeat-once", "bgColor": "#424242" }
+                    ]
+                },
+                "data": {
+                    "states": ["no_repeat", "repeat_all", "repeat_one"]
+                }
+            },
+            {
+                "title": "$YouTubeMusic.SeekForward.Title",
+                "tip": "$YouTubeMusic.SeekForward.Tip",
+                "cid": "at.mrcode.ytmd.seekforward",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-fast-forward",
+                    "width": 120
+                },
+                "data": {
+                    "seconds": 10
+                }
+            },
+            {
+                "title": "$YouTubeMusic.SeekBackward.Title",
+                "tip": "$YouTubeMusic.SeekBackward.Tip",
+                "cid": "at.mrcode.ytmd.seekbackward",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-rewind",
+                    "width": 120
+                },
+                "data": {
+                    "seconds": 10
+                }
+            },
+            {
+                "title": "$YouTubeMusic.SeekSlider.Title",
+                "tip": "$YouTubeMusic.SeekSlider.Tip",
+                "cid": "at.mrcode.ytmd.seekslider",
+                "config": {
+                    "keyType": "slider",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-timeline-clock-outline",
+                    "width": 360,
+                    "slider": {
+                        "color": "#FF0000",
+                        "width": 260,
+                        "format": "%0.0f s",
+                        "min": 0,
+                        "max": 600,
+                        "decimals": 0
+                    }
+                },
+                "data": {
+                    "duration": 600
+                }
+            },
+            {
+                "title": "$YouTubeMusic.PlayByID.Title",
+                "tip": "$YouTubeMusic.PlayByID.Tip",
+                "cid": "at.mrcode.ytmd.playbyid",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-playlist-play",
+                    "width": 120
+                },
+                "data": {
+                    "videoID": "",
+                    "playlistID": ""
+                }
             }
         ]
     },
@@ -242,6 +383,34 @@
                     "AppName": "App Name",
                     "AppVersion": "App Version",
                     "Connect": "Connect to YouTube Music"
+                },
+                "MuteToggle": {
+                    "Title": "Mute/Unmute",
+                    "Tip": "Toggle mute/unmute audio"
+                },
+                "Shuffle": {
+                    "Title": "Shuffle",
+                    "Tip": "Toggle shuffle mode"
+                },
+                "Repeat": {
+                    "Title": "Repeat",
+                    "Tip": "Cycle repeat mode (off/all/one)"
+                },
+                "SeekForward": {
+                    "Title": "+10s",
+                    "Tip": "Seek forward by 10 seconds"
+                },
+                "SeekBackward": {
+                    "Title": "-10s",
+                    "Tip": "Seek backward by 10 seconds"
+                },
+                "SeekSlider": {
+                    "Title": "Seek",
+                    "Tip": "Seek to a specific point in the track"
+                },
+                "PlayByID": {
+                    "Title": "Play by ID",
+                    "Tip": "Play a specific video or playlist by ID"
                 }
             }
         }
