@@ -347,6 +347,65 @@
                     "videoID": "",
                     "playlistID": ""
                 }
+            },
+            {
+                "title": "$YouTubeMusic.VolumeUp.Title",
+                "tip": "$YouTubeMusic.VolumeUp.Tip",
+                "cid": "at.mrcode.ytmd.volumeup",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-volume-plus",
+                    "width": 120
+                },
+                "data": {
+                    "bgColor": "#424242"
+                }
+            },
+            {
+                "title": "$YouTubeMusic.VolumeDown.Title",
+                "tip": "$YouTubeMusic.VolumeDown.Tip",
+                "cid": "at.mrcode.ytmd.volumedown",
+                "config": {
+                    "keyType": "default",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-volume-minus",
+                    "width": 120
+                },
+                "data": {
+                    "bgColor": "#424242"
+                }
+            },
+            {
+                "title": "$YouTubeMusic.VolumeSlider.Title",
+                "tip": "$YouTubeMusic.VolumeSlider.Tip",
+                "cid": "at.mrcode.ytmd.volumeslider",
+                "config": {
+                    "keyType": "slider",
+                    "clickable": true,
+                    "platform": ["windows", "mac", "linux"]
+                },
+                "style": {
+                    "icon": "mdi mdi-volume-high",
+                    "width": 360,
+                    "slider": {
+                        "color": "#00FF00",
+                        "width": 260,
+                        "format": "%0.0f %%",
+                        "min": 0,
+                        "max": 100,
+                        "decimals": 0
+                    }
+                },
+                "data": {
+                    "currentVolume": 50
+                }
             }
         ]
     },
@@ -411,6 +470,18 @@
                 "PlayByID": {
                     "Title": "Play by ID",
                     "Tip": "Play a specific video or playlist by ID"
+                },
+                "VolumeUp": {
+                    "Title": "Volume Up",
+                    "Tip": "Increase volume"
+                },
+                "VolumeDown": {
+                    "Title": "Volume Down",
+                    "Tip": "Decrease volume"
+                },
+                "VolumeSlider": {
+                    "Title": "Volume",
+                    "Tip": "Adjust volume level"
                 }
             }
         }

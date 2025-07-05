@@ -358,7 +358,8 @@ class YouTubeMusicApi {
             isLive: video.isLive || false,
             videoType: video.videoType || -1,
             adPlaying: player.adPlaying || false,
-            queue: player.queue || null
+            queue: player.queue || null,
+            repeatMode: player.queue?.repeatMode || -1, // -1 Unknown, 0 None, 1 All, 2 One
         };
     }
 }
