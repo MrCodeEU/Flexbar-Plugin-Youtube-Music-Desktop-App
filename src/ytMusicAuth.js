@@ -1,5 +1,5 @@
 // YouTube Music Authentication Handler
-const logger = require('./loggerwrapper');
+const logger = require('./loggerwrapper.js');
 const { plugin } = require('@eniac/flexdesigner');
 
 /**

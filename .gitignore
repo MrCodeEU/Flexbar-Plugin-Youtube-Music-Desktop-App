@@ -4,3 +4,8 @@ logs
 .env
 package-lock.json
 at.mrcode.ytmd.plugin/backend
+*backup*
+*tmp*
+*temp*
+*clean*
+*old*

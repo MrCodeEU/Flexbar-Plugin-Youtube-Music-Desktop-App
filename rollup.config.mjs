@@ -93,6 +93,23 @@ async function copyCanvasModules() {
     } else {
         console.warn(`Warning: Could not find canvasRenderer.js at ${canvasRendererSrc}`);
     }
+
+    // Copy keyHandler files to backend directory
+    const keyHandlerFiles = ['keyHandler.js', 'keyHandlerInit.js', 'keyHandlerUpdate.js', 'keyHandlerInteraction.js'];
+    for (const fileName of keyHandlerFiles) {
+        const srcFile = path.resolve(__dirname, 'src', fileName);
+        const destFile = path.resolve(__dirname, flexPlugin, 'backend', fileName);
+        if (await fs.pathExists(srcFile)) {
+            try {
+                await fs.copy(srcFile, destFile);
+                console.log(`Copied ${fileName} to backend directory`);
+            } catch (err) {
+                console.warn(`Warning: Error copying ${fileName}: ${err.message}`);
+            }
+        } else {
+            console.warn(`Warning: Could not find ${fileName} at ${srcFile}`);
+        }
+    }
 }
 
 /**

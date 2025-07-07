@@ -1,5 +1,5 @@
 // YouTube Music Companion Server API wrapper
-const logger = require('./loggerwrapper');
+const logger = require('./loggerwrapper.js');
 
 /**
  * YouTube Music API wrapper for Companion Server
