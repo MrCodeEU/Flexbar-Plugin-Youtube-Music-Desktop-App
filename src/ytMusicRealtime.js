@@ -24,6 +24,8 @@ class YouTubeMusicRealtime {
      * Connect to the Socket.IO server
      */
     async connect() {
+        logger.info('ytMusicRealtime.connect() called');
+        
         if (this.connecting) {
             logger.debug('Socket.IO connection already in progress');
             return false;
@@ -37,17 +39,24 @@ class YouTubeMusicRealtime {
             this.disconnect();
         }
         if (!this.ytMusicApi.getAuthenticationStatus()) {
+            logger.error('Must be authenticated before connecting to real-time updates');
             throw new Error('Must be authenticated before connecting to real-time updates');
         }
         const token = this.ytMusicApi.getToken();
         if (!token) {
+            logger.error('No authentication token available');
             throw new Error('No authentication token available');
         }
+        
+        logger.info('Token available, proceeding with connection. Token starts with:', token.substring(0, 20) + '...');
+        
         try {
             this.connecting = true;
             logger.info('Connecting to YouTube Music real-time updates...');
             // Important: Use IPv4 address as per documentation
             const socketUrl = 'http://127.0.0.1:9863/api/v1/realtime';
+            logger.info('Socket.IO URL:', socketUrl);
+            
             this.socket = io(socketUrl, {
                 transports: ['websocket'], // Required: websocket only
                 auth: {
@@ -56,8 +65,12 @@ class YouTubeMusicRealtime {
                 timeout: 10000,
                 forceNew: true
             });
+            
+            logger.info('Socket.IO client created, setting up event handlers...');
+            
             // Register event handlers immediately after socket creation
             this.setupEventHandlers();
+            
             return new Promise((resolve, reject) => {
                 // Connection timeout
                 const connectTimeout = setTimeout(() => {
@@ -66,7 +79,9 @@ class YouTubeMusicRealtime {
                     this.disconnect();
                     reject(new Error('Connection timeout'));
                 }, 15000);
+                
                 this.socket.on('connect', () => {
+                    logger.info('Socket.IO connect event received');
                     clearTimeout(connectTimeout);
                     this.isConnected = true;
                     this.connecting = false;
@@ -75,7 +90,9 @@ class YouTubeMusicRealtime {
                     logger.info('Successfully connected to YouTube Music real-time updates');
                     resolve(true);
                 });
+                
                 this.socket.on('connect_error', (error) => {
+                    logger.error('Socket.IO connect_error event received:', error.message);
                     clearTimeout(connectTimeout);
                     this.isConnected = false;
                     this.connecting = false;
@@ -83,19 +100,22 @@ class YouTubeMusicRealtime {
                     this.handleConnectionError(error);
                     reject(error);
                 });
+                
                 this.socket.on('disconnect', (reason) => {
-                    logger.warn('Socket.IO disconnected:', reason);
+                    logger.warn('Socket.IO disconnect event received:', reason);
                     this.isConnected = false;
                     this.connecting = false;
                     this.handleDisconnection(reason);
                 });
+                
                 this.socket.on('error', (error) => {
-                    logger.error('Socket.IO error:', error);
+                    logger.error('Socket.IO error event received:', error);
                 });
             });
         } catch (error) {
             this.connecting = false;
             logger.error('Failed to create Socket.IO connection:', error.message);
+            logger.error('Socket.IO connection error stack:', error.stack);
             throw error;
         }
     }
@@ -104,21 +124,21 @@ class YouTubeMusicRealtime {
      * Setup event handlers for Socket.IO events
      */
     setupEventHandlers() {
-        logger.debug('setupEventHandlers() called');
+        logger.info('setupEventHandlers() called');
         if (!this.socket) {
-            logger.debug('setupEventHandlers: no socket, returning');
+            logger.error('setupEventHandlers: no socket, returning');
             return;
         }
         // Prevent multiple registrations for the same socket instance
         if (this._handlersRegistered) {
-            logger.debug('setupEventHandlers: handlers already registered, skipping');
+            logger.info('setupEventHandlers: handlers already registered, skipping');
             return;
         }
         this._handlersRegistered = true;
-        logger.debug('Registering Socket.IO event handlers');
+        logger.info('Registering Socket.IO event handlers');
+        
         // State update events - this is the primary way we get updates
         this.socket.on('state-update', (state) => {
-            // Log only a concise summary of the state for readability
             logger.debug('Received state update event from Socket.IO', {
                 title: state?.video?.title,
                 artist: state?.video?.author,
@@ -127,13 +147,15 @@ class YouTubeMusicRealtime {
                 progress: state?.player?.progress,
                 videoId: state?.video?.id
             });
-            logger.debug('Received state update from YouTube Music', {
-                title: state?.video?.title,
-                isPlaying: state?.player?.trackState === 1,
-                volume: state?.player?.volume
-            });
+            // Actually handle the state update
             this.handleStateUpdate(state);
         });
+        
+        // Test event handler to verify Socket.IO is working
+        this.socket.on('connect', () => {
+            logger.info('Socket.IO connect event received in setupEventHandlers');
+        });
+        
         // Playlist events
         this.socket.on('playlist-created', (playlist) => {
             logger.info('Playlist created:', playlist.title);
@@ -172,9 +194,25 @@ class YouTubeMusicRealtime {
      * Handle state updates
      */
     handleStateUpdate(state) {
+        logger.info('*** handleStateUpdate() called ***', {
+            hasState: !!state,
+            hasVideo: !!state?.video,
+            hasPlayer: !!state?.player,
+            title: state?.video?.title,
+            isPlaying: state?.player?.trackState === 1,
+            volume: state?.player?.volume
+        });
+        
         try {
             // Format the state using the API's formatter
             const formattedState = this.ytMusicApi.formatTrackState(state);
+            
+            logger.info('State formatted successfully', {
+                hasFormattedState: !!formattedState,
+                title: formattedState?.title,
+                isPlaying: formattedState?.isPlaying,
+                volume: formattedState?.volume
+            });
             
             if (formattedState) {
                 // Add timestamp for tracking freshness
@@ -182,23 +220,29 @@ class YouTubeMusicRealtime {
                 
                 // Check if this is a meaningful change
                 if (this.shouldNotifyStateChange(formattedState)) {
+                    logger.info('State change detected, notifying callbacks');
                     this.lastState = formattedState;
                     
                     // Notify all registered callbacks
                     this.stateUpdateCallbacks.forEach(callback => {
                         try {
+                            logger.debug('Calling state update callback');
                             callback(formattedState, state);
                         } catch (error) {
                             logger.error('Error in state update callback:', error.message);
                         }
                     });
                 } else {
+                    logger.debug('No meaningful state change, not notifying callbacks');
                     // Even if we don't notify, update lastState for progress tracking
                     this.lastState = formattedState;
                 }
+            } else {
+                logger.warn('Failed to format state - formatTrackState returned null');
             }
         } catch (error) {
             logger.error('Error handling state update:', error.message);
+            logger.error('State update error stack:', error.stack);
         }
     }
 
@@ -336,20 +380,24 @@ class YouTubeMusicRealtime {
      * Disconnect from Socket.IO
      */
     disconnect() {
-        if (this.connectionAttemptTimer) {
-            clearTimeout(this.connectionAttemptTimer);
-            this.connectionAttemptTimer = null;
+        logger.info('ytMusicRealtime.disconnect() called');
+        
+        // Clear debug timer
+        if (this._debugTimer) {
+            clearInterval(this._debugTimer);
+            this._debugTimer = null;
         }
-
+        
         if (this.socket) {
-            logger.info('Disconnecting from YouTube Music real-time updates');
             this.socket.disconnect();
             this.socket = null;
         }
-
         this.isConnected = false;
+        this.connecting = false;
+        this._handlersRegistered = false;
         this.reconnectAttempts = 0;
-        this.lastState = null;
+        
+        logger.info('Socket.IO disconnected and cleaned up');
     }
 
     /**

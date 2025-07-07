@@ -343,7 +343,23 @@ async function updateRepeatKeyDisplay(serialNumber, key) {
             return;
         }
 
-        plugin.setMultiState(serialNumber, key, currentKeyData.data.currentState);
+        // Use real-time repeat mode from currentPlaybackState
+        // repeatMode: -1 Unknown, 0 None, 1 All, 2 One
+        const repeatMode = currentPlaybackState.repeatMode || -1;
+        
+        // Map repeat mode to multi-state value (0-based for FlexBar)
+        let multiStateValue = 0; // Default to "None"
+        if (repeatMode === 1) {
+            multiStateValue = 1; // "All"
+        } else if (repeatMode === 2) {
+            multiStateValue = 2; // "One"
+        }
+        
+        // Update the key's internal state to match real-time state
+        currentKeyData.data.currentState = multiStateValue;
+        
+        plugin.setMultiState(serialNumber, key, multiStateValue);
+        logger.debug(`Updated repeat mode to: ${repeatMode} (multi-state: ${multiStateValue})`);
         //keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating repeat key ${keyId}: ${error.message}`);
@@ -501,8 +517,14 @@ async function updateVolumeSliderKeyDisplay(serialNumber, key) {
             return;
         }
 
-        const volume = currentKeyData.data.currentVolume || 50;
+        // Use real-time volume from currentPlaybackState
+        const volume = currentPlaybackState.volume || 50;
+        
+        // Update the key's internal state to match real-time state
+        currentKeyData.data.currentVolume = volume;
+        
         plugin.setSlider(serialNumber, key, volume);
+        logger.debug(`Updated volume slider to: ${volume}%`);
         //keyManager.simpleTextDraw(serialNumber, currentKeyData, `Vol: ${volume}%`, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating volume slider key ${keyId}: ${error.message}`);

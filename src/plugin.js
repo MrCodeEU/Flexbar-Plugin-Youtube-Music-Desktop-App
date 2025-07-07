@@ -162,15 +162,29 @@ function _handleDeviceStatus(devices) {
 function _handlePluginAlive(payload) {
     logger.info('Processing plugin.alive:', payload);
 
-    // initialize or update authentication
+    // initialize or update authentication first
     logger.info('Initializing YouTube Music authentication from config...');
-    plugin.getConfig().then(config => {
+    plugin.getConfig().then(async config => {
         if (config && config.isAuthenticated && config.token && config.appId) {
             logger.info('Found saved authentication data, setting token...');
             ytMusicApi.setToken(config.token, config.appId);
             ytMusicApi.isAuthenticated = true;
             ytMusicAuth.isAuthenticated = true;
             logger.info('Authentication initialized from saved config');
+            
+            // Try to establish real-time connection early if we have authentication
+            try {
+                if (!currentPlaybackState.realTimeConnected) {
+                    logger.info('Authentication detected, establishing real-time connection...');
+                    await connectToRealTimeUpdates();
+                    logger.info('Real-time connection established during initialization');
+                } else {
+                    logger.info('Real-time connection already established');
+                }
+            } catch (error) {
+                logger.error('Failed to establish real-time connection during initialization:', error.message);
+                logger.error('Real-time connection error details:', error);
+            }
         } else {
             logger.info('No valid authentication data found in config');
         }
@@ -388,10 +402,25 @@ function _handlePluginData(payload) {
 
 // Real-time connection management
 async function connectToRealTimeUpdates() {
+    logger.info('connectToRealTimeUpdates() called');
+    
+    if (!ytMusicAuth.getAuthenticationStatus()) {
+        logger.error('Not authenticated, cannot connect to real-time updates');
+        throw new Error('Not authenticated');
+    }
+    
+    if (!ytMusicApi.getToken()) {
+        logger.error('No token available, cannot connect to real-time updates');
+        throw new Error('No token available');
+    }
+    
+    logger.info('Checking current real-time connection status...');
+    
     try {
         if (currentPlaybackState.realTimeConnected) {
             // Verify the connection is actually working
             const connectionStatus = ytMusicRealtime.getConnectionStatus();
+            logger.info('Current connection status:', connectionStatus);
             if (connectionStatus.isConnected) {
                 logger.debug('Real-time updates already connected and verified');
                 return;
@@ -404,17 +433,22 @@ async function connectToRealTimeUpdates() {
         logger.info('Establishing YouTube Music real-time connection...');
         await ytMusicRealtime.connect();
         currentPlaybackState.realTimeConnected = true;
+        logger.info('Real-time connection established successfully');
 
         // Register for state updates - this is our primary data source
         ytMusicRealtime.onStateUpdate((formattedState, rawState) => {
+            logger.debug('Real-time state update callback triggered');
             handleRealTimeStateUpdate(formattedState, rawState);
         });
+        
+        logger.info('Real-time state update callback registered');
         
         // Initial state will be requested via REST API by the connection handler
         // Socket.IO will then provide real-time updates via events (state-update, etc.)
         
     } catch (error) {
         logger.error('Failed to establish real-time connection:', error.message);
+        logger.error('Real-time connection error stack:', error.stack);
         currentPlaybackState.realTimeConnected = false;
         showNotification(null, `Real-time connection failed: ${error.message}`, 'error', 'warning');
         throw error;
