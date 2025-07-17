@@ -470,11 +470,23 @@ async function updatePlayByIdKeyDisplay(serialNumber, key) {
             return;
         }
 
-        const videoId = currentKeyData.data.videoID ? currentKeyData.data.videoID.substring(0, 8) : 'None';
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, `Play: ${videoId}`, currentKeyData.data.bgColor);
+        // Determine what will be played based on configuration
+        let displayText = 'Play by ID';
+        let displaySubtext = 'Not configured';
+        
+        if (currentKeyData.data.playlistID) {
+            const shortId = currentKeyData.data.playlistID.substring(0, 8);
+            displayText = 'Playlist';
+            displaySubtext = `${shortId}...`;
+        } else if (currentKeyData.data.videoID) {
+            displayText = 'Video';
+            displaySubtext = currentKeyData.data.videoID.substring(0, 8);
+        }
+
+        // Add custom render at some point with album cover ?? how to get that ??
     } catch (error) {
         logger.error(`Error updating play by ID key ${keyId}: ${error.message}`);
-        keyManager.textOnlyDraw(serialNumber, key, 'Play Error');
+        keyManager.textOnlyDraw(serialNumber, key, 'Config Error');
     }
 }
 

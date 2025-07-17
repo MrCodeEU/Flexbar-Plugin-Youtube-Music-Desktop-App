@@ -1,30 +1,30 @@
 {
     "config": {
-    "appName": {
-        "type": "string",
-        "default": "FlexBar YouTube Music Plugin"
+        "appName": {
+            "type": "string",
+            "default": "FlexBar YouTube Music Plugin"
+        },
+        "appVersion": {
+            "type": "string",
+            "default": "1.0.0"
+        },
+        "token": {
+            "type": "string",
+            "default": ""
+        },
+        "appId": {
+            "type": "string",
+            "default": ""
+        },
+        "isAuthenticated": {
+            "type": "boolean",
+            "default": false
+        },
+        "logLevel": {
+            "type": "string",
+            "default": "INFO"
+        }
     },
-    "appVersion": {
-        "type": "string",
-        "default": "1.0.0"
-    },
-    "token": {
-        "type": "string",
-        "default": ""
-    },
-    "appId": {
-        "type": "string",
-        "default": ""
-    },
-    "isAuthenticated": {
-        "type": "boolean",
-        "default": false
-    },
-    "logLevel": {
-        "type": "string",
-        "default": "INFO"
-    }
-},
     "name": "YouTube Music Desktop App Integration",
     "uuid": "at.mrcode.ytmd",
     "version": "0.1.5",
@@ -214,18 +214,31 @@
                 "config": {
                     "keyType": "multiState",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-volume-high",
                     "width": 120,
                     "multiStyle": [
-                        { "icon": "mdi mdi-volume-high", "bgColor": "#424242" },
-                        { "icon": "mdi mdi-volume-off", "bgColor": "#424242" }
+                        {
+                            "icon": "mdi mdi-volume-high",
+                            "bgColor": "#424242"
+                        },
+                        {
+                            "icon": "mdi mdi-volume-off",
+                            "bgColor": "#424242"
+                        }
                     ]
                 },
                 "data": {
-                    "states": ["unmuted", "muted"]
+                    "states": [
+                        "unmuted",
+                        "muted"
+                    ]
                 }
             },
             {
@@ -235,18 +248,31 @@
                 "config": {
                     "keyType": "multiState",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-shuffle-variant",
                     "width": 120,
                     "multiStyle": [
-                        { "icon": "mdi mdi-shuffle-variant", "bgColor": "#424242" },
-                        { "icon": "mdi mdi-shuffle-disabled", "bgColor": "#424242" }
+                        {
+                            "icon": "mdi mdi-shuffle-variant",
+                            "bgColor": "#424242"
+                        },
+                        {
+                            "icon": "mdi mdi-shuffle-disabled",
+                            "bgColor": "#424242"
+                        }
                     ]
                 },
                 "data": {
-                    "states": ["shuffle", "notshuffle"]
+                    "states": [
+                        "shuffle",
+                        "notshuffle"
+                    ]
                 }
             },
             {
@@ -256,19 +282,36 @@
                 "config": {
                     "keyType": "multiState",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-repeat-off",
                     "width": 120,
                     "multiStyle": [
-                        { "icon": "mdi mdi-repeat-off", "bgColor": "#424242" },
-                        { "icon": "mdi mdi-repeat", "bgColor": "#424242" },
-                        { "icon": "mdi mdi-repeat-once", "bgColor": "#424242" }
+                        {
+                            "icon": "mdi mdi-repeat-off",
+                            "bgColor": "#424242"
+                        },
+                        {
+                            "icon": "mdi mdi-repeat",
+                            "bgColor": "#424242"
+                        },
+                        {
+                            "icon": "mdi mdi-repeat-once",
+                            "bgColor": "#424242"
+                        }
                     ]
                 },
                 "data": {
-                    "states": ["no_repeat", "repeat_all", "repeat_one"]
+                    "states": [
+                        "no_repeat",
+                        "repeat_all",
+                        "repeat_one"
+                    ]
                 }
             },
             {
@@ -278,7 +321,11 @@
                 "config": {
                     "keyType": "default",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-fast-forward",
@@ -295,7 +342,11 @@
                 "config": {
                     "keyType": "default",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-rewind",
@@ -312,7 +363,11 @@
                 "config": {
                     "keyType": "slider",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-timeline-clock-outline",
@@ -337,7 +392,11 @@
                 "config": {
                     "keyType": "default",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-playlist-play",
@@ -345,7 +404,8 @@
                 },
                 "data": {
                     "videoID": "",
-                    "playlistID": ""
+                    "playlistID": "",
+                    "bgColor": "#424242"
                 }
             },
             {
@@ -355,7 +415,11 @@
                 "config": {
                     "keyType": "default",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-volume-plus",
@@ -372,7 +436,11 @@
                 "config": {
                     "keyType": "default",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-volume-minus",
@@ -389,7 +457,11 @@
                 "config": {
                     "keyType": "slider",
                     "clickable": true,
-                    "platform": ["windows", "mac", "linux"]
+                    "platform": [
+                        "windows",
+                        "mac",
+                        "linux"
+                    ]
                 },
                 "style": {
                     "icon": "mdi mdi-volume-high",
