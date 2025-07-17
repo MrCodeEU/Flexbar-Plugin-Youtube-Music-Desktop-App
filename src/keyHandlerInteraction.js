@@ -23,6 +23,47 @@ let currentPlaybackState = null;
 let showErrorNotification = null;
 let showAuthError = null;
 
+// Volume slider debouncing system
+const volumeDebounceTimers = new Map(); // Map of keyId -> timer
+const VOLUME_DEBOUNCE_MS = 200; // 1 second after last volume change
+
+// Debounced volume change function
+function debouncedVolumeChange(serialNumber, key, volume) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    
+    // Clear existing timer for this key
+    if (volumeDebounceTimers.has(keyId)) {
+        clearTimeout(volumeDebounceTimers.get(keyId));
+    }
+    
+    // Set new timer
+    const timer = setTimeout(async () => {
+        try {
+            logger.debug(`Debouncer: Sending volume change to ${volume}`);
+            await ytMusicApi.setVolume(Math.round(volume));
+            logger.info(`Volume set to ${Math.round(volume)} (debounced)`);
+            showErrorNotification(serialNumber, `Volume: ${Math.round(volume)}%`, 'info', 'volume');
+            
+            // Update the key's display
+            setTimeout(() => {
+                updateVolumeSliderKeyDisplay(serialNumber, key);
+            }, 100);
+            
+        } catch (error) {
+            logger.error(`Debounced volume change failed: ${error.message}`);
+            showErrorNotification(serialNumber, `Volume change failed: ${error.message}`, 'error', 'warning');
+        } finally {
+            // Remove timer from map
+            volumeDebounceTimers.delete(keyId);
+        }
+    }, VOLUME_DEBOUNCE_MS);
+    
+    // Store timer
+    volumeDebounceTimers.set(keyId, timer);
+    
+    logger.debug(`Volume change debounced for ${VOLUME_DEBOUNCE_MS}ms`);
+}
+
 // Initialize the module with instances from plugin.js
 function initializeModule(authInstance, apiInstance, stateInstance, errorNotificationFn, authErrorFn) {
     ytMusicAuth = authInstance;
@@ -499,17 +540,16 @@ async function handleVolumeSliderInteraction(serialNumber, key, data) {
         const currentKeyData = keyManager.keyData[key.uid];
         const sliderValue = data?.value || 0; // Slider sends value 0-100
         
-        // Update the key data with new volume
+        // Update the key data with new volume immediately for UI responsiveness
         currentKeyData.data.currentVolume = Math.round(sliderValue);
         
-        await ytMusicApi.setVolume(Math.round(sliderValue));
-        logger.info(`Volume set to ${Math.round(sliderValue)}`);
-        showErrorNotification(serialNumber, `Volume: ${Math.round(sliderValue)}%`, 'info', 'volume');
-
-        // Update display after short delay
-        setTimeout(() => {
-            updateVolumeSliderKeyDisplay(serialNumber, key);
-        }, 500);
+        // Update the key display immediately for immediate visual feedback
+        updateVolumeSliderKeyDisplay(serialNumber, key);
+        
+        // Use debounced volume change to avoid spamming the API
+        debouncedVolumeChange(serialNumber, key, sliderValue);
+        
+        logger.debug(`Volume slider moved to ${Math.round(sliderValue)} (debounced API call pending)`);
 
     } catch (error) {
         logger.error(`Error handling volume slider interaction: ${error.message}`);

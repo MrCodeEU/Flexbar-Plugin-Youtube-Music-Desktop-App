@@ -137,6 +137,91 @@ function updateCurrentPlaybackStateFromTrack(trackData) {
     }
 }
 
+// Rate limiting system for key updates
+const rateLimiter = {
+    // State update throttling (max once per second)
+    lastUpdateTime: 0,
+    pendingUpdate: null,
+    UPDATE_THROTTLE_MS: 1000, // 1 second between updates
+    
+    // Volume slider debouncing (wait for user to stop)
+    volumeDebounceTimers: new Map(), // Map of keyId -> timer
+    VOLUME_DEBOUNCE_MS: 1000, // 1 second after last volume change
+    
+    // Throttled state update function
+    throttledUpdateAllKeys: function() {
+        const now = Date.now();
+        const timeSinceLastUpdate = now - this.lastUpdateTime;
+        
+        if (timeSinceLastUpdate >= this.UPDATE_THROTTLE_MS) {
+            // Enough time has passed, update immediately
+            logger.debug('Rate limiter: Immediate key update');
+            this.lastUpdateTime = now;
+            updateAllActiveKeys();
+            
+            // Clear any pending update since we just updated
+            if (this.pendingUpdate) {
+                clearTimeout(this.pendingUpdate);
+                this.pendingUpdate = null;
+            }
+        } else {
+            // Too soon, schedule a delayed update
+            const remainingTime = this.UPDATE_THROTTLE_MS - timeSinceLastUpdate;
+            logger.debug(`Rate limiter: Scheduling delayed update in ${remainingTime}ms`);
+            
+            // Clear any existing pending update
+            if (this.pendingUpdate) {
+                clearTimeout(this.pendingUpdate);
+            }
+            
+            // Schedule the update
+            this.pendingUpdate = setTimeout(() => {
+                logger.debug('Rate limiter: Executing delayed key update');
+                this.lastUpdateTime = Date.now();
+                updateAllActiveKeys();
+                this.pendingUpdate = null;
+            }, remainingTime);
+        }
+    },
+    
+    // Debounced volume change function
+    debouncedVolumeChange: function(serialNumber, key, volume) {
+        const keyId = `${serialNumber}-${key.uid}`;
+        
+        // Clear existing timer for this key
+        if (this.volumeDebounceTimers.has(keyId)) {
+            clearTimeout(this.volumeDebounceTimers.get(keyId));
+        }
+        
+        // Set new timer
+        const timer = setTimeout(async () => {
+            try {
+                logger.debug(`Rate limiter: Sending debounced volume change to ${volume}`);
+                await ytMusicApi.setVolume(Math.round(volume));
+                logger.info(`Volume set to ${Math.round(volume)} (debounced)`);
+                showErrorNotification(serialNumber, `Volume: ${Math.round(volume)}%`, 'info', 'volume');
+                
+                // Update the key's display
+                setTimeout(() => {
+                    updateVolumeSliderKeyDisplay(serialNumber, key);
+                }, 100);
+                
+            } catch (error) {
+                logger.error(`Debounced volume change failed: ${error.message}`);
+                showErrorNotification(serialNumber, `Volume change failed: ${error.message}`, 'error', 'warning');
+            } finally {
+                // Remove timer from map
+                this.volumeDebounceTimers.delete(keyId);
+            }
+        }, this.VOLUME_DEBOUNCE_MS);
+        
+        // Store timer
+        this.volumeDebounceTimers.set(keyId, timer);
+        
+        logger.debug(`Rate limiter: Volume change debounced for ${this.VOLUME_DEBOUNCE_MS}ms`);
+    }
+};
+
 // Plugin event handlers
 function _handleDeviceStatus(devices) {
     logger.info('Device status changed:', devices);
@@ -542,8 +627,8 @@ function handleRealTimeStateUpdate(formattedState, rawState) {
     // Use the helper function to update currentPlaybackState comprehensively
     updateCurrentPlaybackStateFromTrack(formattedState);
 
-    // Update all active keys with the new state
-    updateAllActiveKeys();
+    // Use throttled update instead of immediate update to prevent too frequent updates
+    rateLimiter.throttledUpdateAllKeys();
 }
 
 // Update all active keys with current state
@@ -817,8 +902,5 @@ process.on('SIGINT', () => {
     process.exit(0);
 });
 
-process.on('SIGTERM', () => {
-    logger.info('Plugin terminating...');
-    ytMusicRealtime.disconnect();
-    process.exit(0);
-});
+// Export rate limiter for use by other modules
+module.exports = { rateLimiter };
