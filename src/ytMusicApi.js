@@ -53,11 +53,11 @@ class YouTubeMusicApi {
 
         try {
             const response = await fetch(url, options);
-            
+
             // Check rate limit headers
             const remaining = response.headers.get('x-ratelimit-remaining');
             const resetTime = response.headers.get('x-ratelimit-reset');
-            
+
             if (remaining && parseInt(remaining) < 5) {
                 logger.warn(`Rate limit warning: ${remaining} requests remaining until ${resetTime}`);
             }
@@ -81,7 +81,7 @@ class YouTubeMusicApi {
     async requestAuthCode(appName, appVersion) {
         // Generate a unique app ID based on the app name
         this.appId = appName.toLowerCase().replace(/[^a-z0-9]/g, '').substring(0, 32);
-        
+
         if (this.appId.length < 2) {
             this.appId = 'flexbarytmusic'; // Fallback
         }
@@ -131,7 +131,7 @@ class YouTubeMusicApi {
 
         try {
             logger.info('Exchanging code for token (this may take up to 30 seconds)...');
-            
+
             const response = await fetch(`${this.baseUrl}/auth/request`, {
                 method: 'POST',
                 headers: {
@@ -148,7 +148,7 @@ class YouTubeMusicApi {
             const data = await response.json();
             this.token = data.token;
             this.isAuthenticated = true;
-            
+
             logger.info('Successfully authenticated with YouTube Music Companion Server');
             return data.token;
         } catch (error) {
@@ -337,6 +337,7 @@ class YouTubeMusicApi {
             return null;
         }
 
+        
         const video = state.video;
         const player = state.player;
 
@@ -360,6 +361,7 @@ class YouTubeMusicApi {
             adPlaying: player.adPlaying || false,
             queue: player.queue || null,
             repeatMode: player.queue?.repeatMode || -1, // -1 Unknown, 0 None, 1 All, 2 One
+            isMuted: typeof player.muted === 'boolean' ? player.muted : null,
         };
     }
 }

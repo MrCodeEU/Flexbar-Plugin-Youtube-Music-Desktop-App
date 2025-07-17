@@ -255,7 +255,7 @@ async function updatePreviousKeyDisplay(serialNumber, key) {
             return;
         }
 
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Previous', currentKeyData.data.bgColor);
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Previous', currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating previous key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Prev Error');
@@ -276,7 +276,7 @@ async function updateNextKeyDisplay(serialNumber, key) {
             return;
         }
 
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Next', currentKeyData.data.bgColor);
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Next', currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating next key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Next Error');
@@ -297,9 +297,14 @@ async function updateMuteToggleKeyDisplay(serialNumber, key) {
             return;
         }
 
-        const isMuted = currentKeyData.data.currentState === 1;
-        const text = isMuted ? 'Muted' : 'Unmuted';
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
+        const isMuted = currentPlaybackState.isMuted;
+        currentKeyData.data.isMuted = isMuted;
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
+        plugin.setMultiState(serialNumber, key, isMuted ? 1 : 0).then(() => {
+            logger.debug(`Updated mute toggle state to: ${isMuted ? 'Muted' : 'Unmuted'}`);
+        }).catch((error) => {
+            logger.error(`Failed to update mute toggle state: ${error.message}`);
+        });
     } catch (error) {
         logger.error(`Error updating mute toggle key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Mute Error');
@@ -322,7 +327,7 @@ async function updateShuffleKeyDisplay(serialNumber, key) {
 
         const isShuffled = currentKeyData.data.currentState === 1;
         const text = isShuffled ? 'Shuffle On' : 'Shuffle Off';
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating shuffle key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Shuffle Error');

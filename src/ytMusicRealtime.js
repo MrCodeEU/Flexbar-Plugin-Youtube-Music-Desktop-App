@@ -200,7 +200,8 @@ class YouTubeMusicRealtime {
             hasPlayer: !!state?.player,
             title: state?.video?.title,
             isPlaying: state?.player?.trackState === 1,
-            volume: state?.player?.volume
+            volume: state?.player?.volume,
+            muted: state?.player?.muted,
         });
         
         try {
@@ -211,7 +212,8 @@ class YouTubeMusicRealtime {
                 hasFormattedState: !!formattedState,
                 title: formattedState?.title,
                 isPlaying: formattedState?.isPlaying,
-                volume: formattedState?.volume
+                volume: formattedState?.volume,
+                muted: formattedState?.isMuted,
             });
             
             if (formattedState) {
@@ -269,7 +271,8 @@ class YouTubeMusicRealtime {
             'isPaused',
             'likeStatus',
             'volume',
-            'repeatMode'
+            'repeatMode',
+            'isMuted',
         ];
 
         for (const key of meaningfulChanges) {

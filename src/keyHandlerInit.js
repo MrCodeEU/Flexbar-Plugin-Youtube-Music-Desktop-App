@@ -31,6 +31,7 @@ function updateCurrentPlaybackStateFromTrack(trackData) {
     currentPlaybackState.volume = trackData.volume || currentPlaybackState.volume;
     currentPlaybackState.likeStatus = trackData.isLiked;
     currentPlaybackState.lastUpdate = Date.now();
+    currentPlaybackState.isMuted = trackData.isMuted || false;
 }
 
 async function initializeNowPlayingKey(serialNumber, key) {

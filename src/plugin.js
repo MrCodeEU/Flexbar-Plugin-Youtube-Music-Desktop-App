@@ -22,7 +22,8 @@ let currentPlaybackState = {
     likeStatus: null,
     lastUpdate: null,
     realTimeConnected: false,
-    repeatMode: -1 // -1 Unknown, 0 None, 1 All, 2 One
+    repeatMode: -1, // -1 Unknown, 0 None, 1 All, 2 One
+    isMuted: false
 };
 
 // Define notification levels (higher number = higher priority)
@@ -127,6 +128,7 @@ function updateCurrentPlaybackStateFromTrack(trackData) {
     currentPlaybackState.lastUpdate = Date.now();
     currentPlaybackState.repeatMode = trackData.repeatMode || -1;
     currentPlaybackState.volume = trackData.volume || 50;
+    currentPlaybackState.isMuted = trackData.isMuted || false;
     
     // Log significant changes
     if (oldVolume !== currentPlaybackState.volume) {
@@ -142,7 +144,7 @@ const rateLimiter = {
     // State update throttling (max once per second)
     lastUpdateTime: 0,
     pendingUpdate: null,
-    UPDATE_THROTTLE_MS: 1000, // 1 second between updates
+    UPDATE_THROTTLE_MS: 100, // 1 second between updates
     
     // Volume slider debouncing (wait for user to stop)
     volumeDebounceTimers: new Map(), // Map of keyId -> timer
