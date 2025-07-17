@@ -303,7 +303,7 @@ async function initializeSeekForwardKey(serialNumber, key) {
         ...key,
         data: {
             seconds: key.data?.seconds || 10,
-            bgColor: key.style?.bgColor || '#424242'
+            bgColor: key.data?.bgColor || '#424242'
         }
     };
 
@@ -325,7 +325,7 @@ async function initializeSeekBackwardKey(serialNumber, key) {
         ...key,
         data: {
             seconds: key.data?.seconds || 10,
-            bgColor: key.style?.bgColor || '#424242'
+            bgColor: key.data?.bgColor || '#424242'
         }
     };
 

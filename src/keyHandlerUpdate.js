@@ -390,7 +390,8 @@ async function updateSeekForwardKeyDisplay(serialNumber, key) {
         }
 
         const seconds = currentKeyData.data.seconds || 10;
-        //keyManager.simpleTextDraw(serialNumber, currentKeyData, `+${seconds}s`, currentKeyData.data.bgColor);
+        
+        //TODO Custom render that displays seek icon of sorts plus the seconds
     } catch (error) {
         logger.error(`Error updating seek forward key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Seek+ Error');
@@ -412,7 +413,9 @@ async function updateSeekBackwardKeyDisplay(serialNumber, key) {
         }
 
         const seconds = currentKeyData.data.seconds || 10;
-        //keyManager.simpleTextDraw(serialNumber, currentKeyData, `-${seconds}s`, currentKeyData.data.bgColor);
+
+        //TODO Custom render that displays seek icon of sorts plus the seconds
+        
     } catch (error) {
         logger.error(`Error updating seek backward key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Seek- Error');
