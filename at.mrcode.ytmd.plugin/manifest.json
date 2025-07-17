@@ -320,14 +320,14 @@
                     "slider": {
                         "color": "#FF0000",
                         "width": 260,
-                        "format": "%0.0f s",
+                        "format": "%0.0f %",
                         "min": 0,
-                        "max": 600,
+                        "max": 100,
                         "decimals": 0
                     }
                 },
                 "data": {
-                    "duration": 600
+                    "duration": 100
                 }
             },
             {

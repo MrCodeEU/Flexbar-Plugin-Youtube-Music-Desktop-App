@@ -25,24 +25,41 @@ let showAuthError = null;
 
 // Volume slider debouncing system
 const volumeDebounceTimers = new Map(); // Map of keyId -> timer
-const VOLUME_DEBOUNCE_MS = 200; // 1 second after last volume change
+const volumeLastUpdateTimes = new Map(); // Map of keyId -> timestamp of last actual update
+const VOLUME_DEBOUNCE_MS = 50; // 50ms after last volume change
+const VOLUME_MAX_DELAY_MS = 500; // Force update after 500ms even if still changing (else companion server will rate limit API calls)
+
+// Seek slider debouncing system
+const seekDebounceTimers = new Map(); // Map of keyId -> timer
+const seekLastUpdateTimes = new Map(); // Map of keyId -> timestamp of last actual update
+const SEEK_DEBOUNCE_MS = 50; // 50ms after last seek change
+const SEEK_MAX_DELAY_MS = 500; // Force update after 500ms even if still changing (else companion server will rate limit API calls)
 
 // Debounced volume change function
 function debouncedVolumeChange(serialNumber, key, volume) {
     const keyId = `${serialNumber}-${key.uid}`;
+    const now = Date.now();
+    const lastUpdateTime = volumeLastUpdateTimes.get(keyId) || 0;
+    const timeSinceLastUpdate = now - lastUpdateTime;
+    
+    // Check if we should force an immediate update due to max delay
+    const shouldForceUpdate = timeSinceLastUpdate >= VOLUME_MAX_DELAY_MS;
     
     // Clear existing timer for this key
     if (volumeDebounceTimers.has(keyId)) {
         clearTimeout(volumeDebounceTimers.get(keyId));
     }
     
-    // Set new timer
-    const timer = setTimeout(async () => {
+    // Function to actually send the volume change
+    const sendVolumeChange = async () => {
         try {
             logger.debug(`Debouncer: Sending volume change to ${volume}`);
             await ytMusicApi.setVolume(Math.round(volume));
             logger.info(`Volume set to ${Math.round(volume)} (debounced)`);
             showErrorNotification(serialNumber, `Volume: ${Math.round(volume)}%`, 'info', 'volume');
+            
+            // Update last update time
+            volumeLastUpdateTimes.set(keyId, Date.now());
             
             // Update the key's display
             setTimeout(() => {
@@ -56,12 +73,82 @@ function debouncedVolumeChange(serialNumber, key, volume) {
             // Remove timer from map
             volumeDebounceTimers.delete(keyId);
         }
-    }, VOLUME_DEBOUNCE_MS);
+    };
     
-    // Store timer
-    volumeDebounceTimers.set(keyId, timer);
+    if (shouldForceUpdate) {
+        // Force immediate update
+        logger.debug(`Volume: Forcing immediate update after ${timeSinceLastUpdate}ms`);
+        sendVolumeChange();
+    } else {
+        // Set new timer with adjusted delay
+        const remainingDelay = Math.max(VOLUME_DEBOUNCE_MS, VOLUME_MAX_DELAY_MS - timeSinceLastUpdate);
+        const timer = setTimeout(sendVolumeChange, remainingDelay);
+        
+        // Store timer
+        volumeDebounceTimers.set(keyId, timer);
+        
+        logger.debug(`Volume change debounced for ${remainingDelay}ms (time since last: ${timeSinceLastUpdate}ms)`);
+    }
+}
+
+// Debounced seek change function
+function debouncedSeekChange(serialNumber, key, sliderValue) {
+    const keyId = `${serialNumber}-${key.uid}`;
+    const now = Date.now();
+    const lastUpdateTime = seekLastUpdateTimes.get(keyId) || 0;
+    const timeSinceLastUpdate = now - lastUpdateTime;
     
-    logger.debug(`Volume change debounced for ${VOLUME_DEBOUNCE_MS}ms`);
+    // Check if we should force an immediate update due to max delay
+    const shouldForceUpdate = timeSinceLastUpdate >= SEEK_MAX_DELAY_MS;
+    
+    // Clear existing timer for this key
+    if (seekDebounceTimers.has(keyId)) {
+        clearTimeout(seekDebounceTimers.get(keyId));
+    }
+    
+    // Function to actually send the seek change
+    const sendSeekChange = async () => {
+        try {
+            const currentKeyData = keyManager.keyData[key.uid];
+            const duration = currentPlaybackState.duration || currentKeyData.data.duration;
+            const newPosition = (sliderValue / 100) * duration;
+            
+            logger.debug(`Debouncer: Sending seek to ${newPosition}s (${sliderValue}%)`);
+            await ytMusicApi.seekTo(newPosition);
+            logger.info(`Seeked to position ${newPosition.toFixed(1)}s (${sliderValue.toFixed(1)}%) (debounced)`);
+            showErrorNotification(serialNumber, `Seek: ${sliderValue.toFixed(1)}%`, 'info', 'clock');
+            
+            // Update last update time
+            seekLastUpdateTimes.set(keyId, Date.now());
+            
+            // Update the key's display
+            setTimeout(() => {
+                updateSeekSliderKeyDisplay(serialNumber, key);
+            }, 100);
+            
+        } catch (error) {
+            logger.error(`Debounced seek change failed: ${error.message}`);
+            showErrorNotification(serialNumber, `Seek change failed: ${error.message}`, 'error', 'warning');
+        } finally {
+            // Remove timer from map
+            seekDebounceTimers.delete(keyId);
+        }
+    };
+    
+    if (shouldForceUpdate) {
+        // Force immediate update
+        logger.debug(`Seek: Forcing immediate update after ${timeSinceLastUpdate}ms`);
+        sendSeekChange();
+    } else {
+        // Set new timer with adjusted delay
+        const remainingDelay = Math.max(SEEK_DEBOUNCE_MS, SEEK_MAX_DELAY_MS - timeSinceLastUpdate);
+        const timer = setTimeout(sendSeekChange, remainingDelay);
+        
+        // Store timer
+        seekDebounceTimers.set(keyId, timer);
+        
+        logger.debug(`Seek change debounced for ${remainingDelay}ms (time since last: ${timeSinceLastUpdate}ms)`);
+    }
 }
 
 // Initialize the module with instances from plugin.js
@@ -413,17 +500,18 @@ async function handleSeekSliderInteraction(serialNumber, key, data) {
         const currentKeyData = keyManager.keyData[key.uid];
         const sliderValue = data?.value || 0; // Assuming slider sends value 0-100
         
+        // Update the key data with new position immediately for UI responsiveness
         const duration = currentPlaybackState.duration || currentKeyData.data.duration;
         const newPosition = (sliderValue / 100) * duration;
+        currentKeyData.data.currentPosition = newPosition;
         
-        await ytMusicApi.seekTo(newPosition);
-        logger.info(`Seeked to position ${newPosition} (${sliderValue}%)`);
-        showErrorNotification(serialNumber, `Seek: ${sliderValue}%`, 'info', 'clock');
-
-        // Update display after short delay
-        setTimeout(() => {
-            updateSeekSliderKeyDisplay(serialNumber, key);
-        }, 500);
+        // Update the key display immediately for immediate visual feedback
+        updateSeekSliderKeyDisplay(serialNumber, key);
+        
+        // Use debounced seek change to avoid spamming the API
+        debouncedSeekChange(serialNumber, key, sliderValue);
+        
+        logger.debug(`Seek slider moved to ${sliderValue.toFixed(1)}% (debounced API call pending)`);
 
     } catch (error) {
         logger.error(`Error handling seek slider interaction: ${error.message}`);

@@ -363,8 +363,11 @@ async function updateRepeatKeyDisplay(serialNumber, key) {
         // Update the key's internal state to match real-time state
         currentKeyData.data.currentState = multiStateValue;
         
-        plugin.setMultiState(serialNumber, key, multiStateValue);
-        logger.debug(`Updated repeat mode to: ${repeatMode} (multi-state: ${multiStateValue})`);
+        plugin.setMultiState(serialNumber, key, multiStateValue).then(() => {
+            logger.debug(`Updated repeat key state to: ${multiStateValue}`);
+        }).catch((error) => {
+            logger.error(`Failed to update repeat key state: ${error.message}`);
+        });
         //keyManager.simpleTextDraw(serialNumber, currentKeyData, text, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating repeat key ${keyId}: ${error.message}`);
@@ -387,7 +390,7 @@ async function updateSeekForwardKeyDisplay(serialNumber, key) {
         }
 
         const seconds = currentKeyData.data.seconds || 10;
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, `+${seconds}s`, currentKeyData.data.bgColor);
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, `+${seconds}s`, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating seek forward key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Seek+ Error');
@@ -409,7 +412,7 @@ async function updateSeekBackwardKeyDisplay(serialNumber, key) {
         }
 
         const seconds = currentKeyData.data.seconds || 10;
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, `-${seconds}s`, currentKeyData.data.bgColor);
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, `-${seconds}s`, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating seek backward key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Seek- Error');
@@ -432,12 +435,21 @@ async function updateSeekSliderKeyDisplay(serialNumber, key) {
 
         // Update current position from global state
         currentKeyData.data.currentPosition = currentPlaybackState.progress || 0;
-        currentKeyData.data.duration = currentPlaybackState.duration || 600;
+        currentKeyData.data.duration = currentPlaybackState.duration || 0;
 
-        const progress = currentKeyData.data.duration > 0 ? 
+        // Calculate percentage of track elapsed (0-100)
+        const elapsedPercentage = currentKeyData.data.duration > 0 ? 
             (currentKeyData.data.currentPosition / currentKeyData.data.duration) * 100 : 0;
         
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, `Seek ${progress.toFixed(0)}%`, currentKeyData.data.bgColor);
+        // Ensure the slider value is between 0 and 100
+        const clampedElapsedPercentage = Math.max(0, Math.min(100, elapsedPercentage));
+
+        plugin.setSlider(serialNumber, key, clampedElapsedPercentage).then(() => {
+            logger.debug(`Updated seek slider to: ${clampedElapsedPercentage.toFixed(1)}% elapsed`);
+        }).catch((error) => {
+            logger.error(`Failed to update seek slider: ${error.message}`);
+        });
+        //keyManager.simpleTextDraw(serialNumber, currentKeyData, `Seek ${elapsedPercentage.toFixed(0)}%`, currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating seek slider key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Slider Error');
