@@ -13,7 +13,9 @@ const {
     updateSeekSliderKeyDisplay,
     updateVolumeUpKeyDisplay,
     updateVolumeDownKeyDisplay,
-    updateVolumeSliderKeyDisplay
+    updateVolumeSliderKeyDisplay,
+    updatePreviousKeyDisplay,
+    updateNextKeyDisplay
 } = require('./keyHandlerUpdate.js');
 
 // Module-level references to instances passed from plugin.js

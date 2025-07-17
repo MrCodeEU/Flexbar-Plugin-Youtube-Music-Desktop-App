@@ -492,7 +492,7 @@ async function updateVolumeUpKeyDisplay(serialNumber, key) {
             return;
         }
 
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Vol +', currentKeyData.data.bgColor);
+        // keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Vol +', currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating volume up key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Vol+ Error');
@@ -513,7 +513,7 @@ async function updateVolumeDownKeyDisplay(serialNumber, key) {
             return;
         }
 
-        keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Vol -', currentKeyData.data.bgColor);
+        // keyManager.simpleTextDraw(serialNumber, currentKeyData, 'Vol -', currentKeyData.data.bgColor);
     } catch (error) {
         logger.error(`Error updating volume down key ${keyId}: ${error.message}`);
         keyManager.textOnlyDraw(serialNumber, key, 'Vol- Error');
