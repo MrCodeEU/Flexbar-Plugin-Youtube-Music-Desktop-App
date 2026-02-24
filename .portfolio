@@ -1,0 +1,9 @@
+{
+  "description": "A YouTube Music integration plugin for FlexBar that provides real-time music information display and playback controls via the YouTube Music Desktop App's Companion Server API.",
+  "featured": false,
+  "tags": ["javascript", "flexbar", "youtube-music", "plugin", "music", "nodejs"],
+  "images": [
+    "https://picsum.photos/seed/flexbar1/800/450",
+    "https://picsum.photos/seed/flexbar2/800/450"
+  ]
+}
